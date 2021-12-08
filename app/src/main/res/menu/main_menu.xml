@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeItem"
+        android:icon="@drawable/pdf_image"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/pdfItem"
+        android:icon="@drawable/tools_image"
+        android:title="@string/pdf_tools" />
+    <item
+        android:id="@+id/imageTools"
+        android:icon="@drawable/image_tools"
+        android:title="@string/image_tools" />
+    <item
+        android:id="@+id/userItem"
+        android:icon="@drawable/user_image"
+        android:title="@string/profile" />
+</menu>
