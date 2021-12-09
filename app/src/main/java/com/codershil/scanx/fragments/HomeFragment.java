@@ -1,6 +1,6 @@
 package com.codershil.scanx.fragments;
 
-import android.app.Activity;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,16 +8,15 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.cardview.widget.CardView;
+
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.codershil.scanx.ConvertToPdfActivity;
-import com.codershil.scanx.R;
+import com.codershil.scanx.ImageCaptureActivity;
 import com.codershil.scanx.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
@@ -70,7 +69,7 @@ public class HomeFragment extends Fragment {
         binding.cameraCaputure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), ImageCaptureActivity.class));
             }
         });
         return binding.getRoot();

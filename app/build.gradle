@@ -20,7 +20,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -45,5 +45,7 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.7.0'
     // dependency for pdf viewer
     implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+    // camerakit dependency for image capture
+    implementation 'com.wonderkiln:camerakit:0.13.1'
 
 }

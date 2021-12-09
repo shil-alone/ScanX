@@ -10,9 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.codershil.scanx.databinding.ActivityMainBinding;
@@ -76,14 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_menu,menu);
+        getMenuInflater().inflate(R.menu.home_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-        switch(itemId){
+        switch (itemId) {
             case R.id.aboutUs:
                 Toast.makeText(MainActivity.this, "Made by G29 Group PCE", Toast.LENGTH_LONG).show();
                 break;

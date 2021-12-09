@@ -5,7 +5,8 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -16,11 +17,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScanX">
         <activity
+            android:name=".ImageCaptureActivity"
+            android:exported="false"
+            android:launchMode="singleTask"/>
+        <activity
             android:name=".PdfViewerActivity"
             android:exported="false" />
         <activity
             android:name=".ConvertToPdfActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

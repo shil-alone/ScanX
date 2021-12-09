@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/shila/AndroidStudioProjects/ScanX/app/src/main/res/drawable/image_bg.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/shila/AndroidStudioProjects/ScanX/app/src/main/res/layout/activity_convert_to_pdf.xml" value="0.209375" />
+        <entry key="..\:/Users/shila/AndroidStudioProjects/ScanX/app/src/main/res/layout/activity_image_capture.xml" value="0.2" />
         <entry key="..\:/Users/shila/AndroidStudioProjects/ScanX/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/shila/AndroidStudioProjects/ScanX/app/src/main/res/layout/activity_pdf_viewer.xml" value="0.209375" />
         <entry key="..\:/Users/shila/AndroidStudioProjects/ScanX/app/src/main/res/layout/fragment_home.xml" value="0.18" />

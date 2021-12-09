@@ -75,4 +75,15 @@
         app:layout_constraintEnd_toEndOf="@+id/btnConvertToPdf"
         app:srcCompat="@drawable/add_image" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addCameraImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        app:backgroundTint="@color/emerald"
+        app:layout_constraintBottom_toTopOf="@+id/addImage"
+        app:layout_constraintEnd_toEndOf="@+id/addImage"
+        app:srcCompat="@drawable/camera_image" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

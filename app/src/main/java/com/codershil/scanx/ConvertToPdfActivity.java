@@ -54,7 +54,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         binding = ActivityConvertToPdfBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.progressBar.setVisibility(View.GONE);
-
         Bundle bundle = getIntent().getExtras();
         selectedImageList = (ArrayList<Uri>) bundle.get("imageUriData");
         setUpRecyclerView();
@@ -115,7 +114,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
                         int sizeOld = selectedImageList.size();
                         ArrayList<Uri> imageList = new ArrayList<>(result);
                         selectedImageList.addAll(imageList);
-                        imageAdapter.notifyItemRangeInserted(sizeOld,selectedImageList.size()-1);
+                        imageAdapter.notifyItemRangeInserted(sizeOld, selectedImageList.size() - 1);
                     }
                 });
 
@@ -123,6 +122,14 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             @Override
             public void onClick(View v) {
                 getContent.launch("image/*");
+            }
+        });
+
+        binding.addCameraImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ConvertToPdfActivity.this, ImageCaptureActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -140,8 +147,8 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
-                Collections.swap(selectedImageList,fromPosition,toPosition);
-                imageAdapter.updateList(selectedImageList,fromPosition,toPosition);
+                Collections.swap(selectedImageList, fromPosition, toPosition);
+                imageAdapter.updateList(selectedImageList, fromPosition, toPosition);
                 return false;
             }
 
@@ -241,7 +248,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
     public void onDeleteClicked(int position) {
         selectedImageList.remove(position);
         imageAdapter.updateData(selectedImageList, position);
-
     }
 
     @Override
