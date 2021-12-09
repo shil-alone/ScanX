@@ -66,17 +66,16 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == SELECT_PICTURES && data != null) {
-            if(resultCode == Activity.RESULT_OK) {
-                if(data.getClipData() != null) {
+        if (requestCode == SELECT_PICTURES && data != null) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data.getClipData() != null) {
                     int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-                    Toast.makeText(getContext(), count+"", Toast.LENGTH_SHORT).show();
-                    for(int i = 0; i < count; i++) {
+                    for (int i = 0; i < count; i++) {
                         Uri imageUri = data.getClipData().getItemAt(i).getUri();
                         imageUriList.add(imageUri);
                     }
                 }
-            } else if(data.getData() != null) {
+            } else if (data.getData() != null) {
                 String imagePath = data.getData().getPath();
             }
 

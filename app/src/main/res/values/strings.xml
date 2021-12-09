@@ -12,8 +12,9 @@
     <string name="convert_to_pdf">Convert To PDF</string>
     <string name="name_your_file">Name Your File</string>
     <string name="name_hint">Enter File Name</string>
-    <string name="cancel">Cancel</string>
+    <string name="auto">Auto Rename</string>
     <string name="rename">Rename</string>
+    <string name="about_us">About Us</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
