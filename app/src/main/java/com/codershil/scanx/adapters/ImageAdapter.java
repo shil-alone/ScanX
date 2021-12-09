@@ -39,12 +39,24 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 listener.onDeleteClicked(imageViewHolder.getAdapterPosition());
             }
         });
+        imageViewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onImageClicked(imageViewHolder.getAdapterPosition());
+            }
+        });
     }
 
     // method to update recycler view
     public void updateData(ArrayList<Uri> selectedImagesList,int position){
         this.selectedImagesList = selectedImagesList;
         notifyItemRemoved(position);
+    }
+
+    public void updateList(ArrayList<Uri> selectedImagesList,int startIndex,int endIndex){
+        this.selectedImagesList = selectedImagesList;
+        notifyDataSetChanged();
+
     }
 
     @Override
@@ -65,5 +77,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     // onclick handling interface
     public interface OnDeleteListener{
         void onDeleteClicked(int position);
+        void onImageClicked(int position);
     }
 }

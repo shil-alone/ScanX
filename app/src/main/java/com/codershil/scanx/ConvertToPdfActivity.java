@@ -5,6 +5,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,12 +35,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdapter.OnDeleteListener {
+
     private ActivityConvertToPdfBinding binding;
-    private ImageAdapter imageAdapter;
-    private ArrayList<Uri> selectedImageList = new ArrayList<>();
     private ActivityResultLauncher<String> galleryLauncher;
+    public ImageAdapter imageAdapter;
+    public ArrayList<Uri> selectedImageList = new ArrayList<>();
     Uri imageUri, pdfUri;
     String fileName;
 
@@ -51,12 +55,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
 
         Bundle bundle = getIntent().getExtras();
         selectedImageList = (ArrayList<Uri>) bundle.get("imageUriData");
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(ConvertToPdfActivity.this, 3);
-        imageAdapter = new ImageAdapter(selectedImageList, ConvertToPdfActivity.this, this);
-        binding.selectedImagesRV.setLayoutManager(gridLayoutManager);
-        binding.selectedImagesRV.setAdapter(imageAdapter);
-
+        setUpRecyclerView();
 
         // handling onclick events and building dialog box
         binding.btnConvertToPdf.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +122,33 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
 
     }
 
+
+    private void setUpRecyclerView() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(ConvertToPdfActivity.this, 3);
+        imageAdapter = new ImageAdapter(selectedImageList, ConvertToPdfActivity.this, this);
+        binding.selectedImagesRV.setLayoutManager(gridLayoutManager);
+        binding.selectedImagesRV.setAdapter(imageAdapter);
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP |
+                ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, 0) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+                Collections.swap(selectedImageList,fromPosition,toPosition);
+                imageAdapter.updateList(selectedImageList,fromPosition,toPosition);
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(binding.selectedImagesRV);
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelableArrayList("uriList", selectedImageList);
@@ -137,6 +163,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
 
     // a method that converts image into pdf format and saves it into external storage
     public void convertImageToPdf(ArrayList<Uri> uriList) {
+
         PdfDocument pdfDocument = new PdfDocument();
         OutputStream outputStream;
 
@@ -201,6 +228,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
                 startActivity(intent);
             }
         });
+
     }
 
     public void startPdfConversion(Dialog dialog) {
@@ -221,5 +249,28 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         selectedImageList.remove(position);
         imageAdapter.updateData(selectedImageList, position);
 
+    }
+
+    @Override
+    public void onImageClicked(int position) {
+        // showing dialog box with image that clicked
+        View view = LayoutInflater.from(ConvertToPdfActivity.this).inflate(R.layout.image_dialog, null);
+        ImageView btnCancel = view.findViewById(R.id.btnCancel);
+        ImageView imageToShow = view.findViewById(R.id.imageToShow);
+        imageToShow.setImageURI(selectedImageList.get(position));
+
+        AlertDialog dialog = new AlertDialog.Builder(ConvertToPdfActivity.this)
+                .setView(view)
+                .setCancelable(false)
+                .create();
+        dialog.show();
+
+        // setting up listeners on dialog box
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 }
