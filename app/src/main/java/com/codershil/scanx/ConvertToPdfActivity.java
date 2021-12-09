@@ -1,5 +1,6 @@
 package com.codershil.scanx;
 
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdapter.OnDeleteListener {
 
@@ -105,23 +107,26 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             }
         });
 
+        // to get multiple images from gallery
+        ActivityResultLauncher<String> getContent = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(),
+                new ActivityResultCallback<List<Uri>>() {
+                    @Override
+                    public void onActivityResult(List<Uri> result) {
+                        int sizeOld = selectedImageList.size();
+                        ArrayList<Uri> imageList = new ArrayList<>(result);
+                        selectedImageList.addAll(imageList);
+                        imageAdapter.notifyItemRangeInserted(sizeOld,selectedImageList.size()-1);
+                    }
+                });
+
         binding.addImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                galleryLauncher.launch("image/*");
+                getContent.launch("image/*");
             }
         });
 
-        // gallery launcher is to get image from gallery
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
-                uri -> {
-                    imageUri = uri;
-                    selectedImageList.add(uri);
-                    imageAdapter.updateData(selectedImageList, selectedImageList.size() - 1);
-                });
-
     }
-
 
     private void setUpRecyclerView() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(ConvertToPdfActivity.this, 3);
@@ -147,18 +152,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(binding.selectedImagesRV);
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putParcelableArrayList("uriList", selectedImageList);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        selectedImageList = savedInstanceState.getParcelableArrayList("uriList");
     }
 
     // a method that converts image into pdf format and saves it into external storage
@@ -272,5 +265,18 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
                 dialog.dismiss();
             }
         });
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelableArrayList("uriList", selectedImageList);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedImageList = savedInstanceState.getParcelableArrayList("uriList");
     }
 }
