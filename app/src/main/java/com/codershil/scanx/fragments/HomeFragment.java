@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
@@ -18,12 +21,13 @@ import com.codershil.scanx.R;
 import com.codershil.scanx.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private ArrayList<Uri> imageUriList = new ArrayList<>();
-    public static final int SELECT_PICTURES = 1;
+    public static final int SELECT_PICTURES = 10;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -40,15 +44,26 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
+        // to get multiple images from gallery
+        ActivityResultLauncher<String> getContent = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(),
+                new ActivityResultCallback<List<Uri>>() {
+                    @Override
+                    public void onActivityResult(List<Uri> result) {
+                        ArrayList<Uri> imageList = new ArrayList<>(result);
+                        imageUriList = imageList;
+                        //passing arraylist to ConvertToPdfActivity via intent
+                        Intent intent = new Intent(getActivity(), ConvertToPdfActivity.class);
+                        intent.putExtra("imageUriData", imageUriList);
+                        startActivity(intent);
+                        imageUriList.clear();
+                    }
+                });
+
         // handling onclick
         binding.selectGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*"); //allows any image file type. Change * to specific extension to limit it
-                //**The following line is the important one!
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURES);
+                getContent.launch("image/*");
             }
         });
 
@@ -61,30 +76,5 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
-
-    // method to get multiple images from galllery
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SELECT_PICTURES && data != null) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data.getClipData() != null) {
-                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-                    for (int i = 0; i < count; i++) {
-                        Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                        imageUriList.add(imageUri);
-                    }
-                }
-            } else if (data.getData() != null) {
-                String imagePath = data.getData().getPath();
-            }
-
-            // passing arraylist to ConvertToPdfActivity via intent
-            Intent intent = new Intent(getActivity(), ConvertToPdfActivity.class);
-            intent.putExtra("imageUriData", imageUriList);
-            startActivity(intent);
-            imageUriList.clear();
-        }
-    }
 
 }
