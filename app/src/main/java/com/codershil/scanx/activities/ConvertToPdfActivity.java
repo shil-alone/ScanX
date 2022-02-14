@@ -1,20 +1,29 @@
-package com.codershil.scanx;
+package com.codershil.scanx.activities;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
@@ -28,25 +37,30 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.codershil.scanx.R;
 import com.codershil.scanx.adapters.ImageAdapter;
 import com.codershil.scanx.databinding.ActivityConvertToPdfBinding;
+import com.codershil.scanx.imageTools.ImageTools;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdapter.OnDeleteListener {
 
-    private ActivityConvertToPdfBinding binding;
-    private ActivityResultLauncher<String> galleryLauncher;
-    public ImageAdapter imageAdapter;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
     public ArrayList<Uri> selectedImageList = new ArrayList<>();
-    Uri imageUri, pdfUri;
+    public ActivityConvertToPdfBinding binding;
+    public ImageAdapter imageAdapter;
+    Uri pdfUri;
     String fileName;
+    String currentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +68,14 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         binding = ActivityConvertToPdfBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.progressBar.setVisibility(View.GONE);
+
+//         getting data image capture activity
         Bundle bundle = getIntent().getExtras();
-        selectedImageList = (ArrayList<Uri>) bundle.get("imageUriData");
+        if(bundle != null){
+            ArrayList<Uri> newList = (ArrayList<Uri>) bundle.get("imageUriData");
+            selectedImageList.addAll(newList);
+        }
+
         setUpRecyclerView();
 
         // handling onclick events and building dialog box
@@ -63,13 +83,12 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             @Override
             public void onClick(View v) {
 
-                // building dialog box
+                // building dialog box to show rename option
                 View view = LayoutInflater.from(ConvertToPdfActivity.this).inflate(R.layout.rename_dialog, null);
                 Button btnAutoRename = view.findViewById(R.id.btnAuto);
                 Button btnRename = view.findViewById(R.id.btnRename);
                 ImageView imgCancel = view.findViewById(R.id.imgCancel);
                 EditText edtFileName = view.findViewById(R.id.edtFileName);
-
                 AlertDialog dialog = new AlertDialog.Builder(ConvertToPdfActivity.this)
                         .setView(view)
                         .setCancelable(false)
@@ -106,7 +125,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             }
         });
 
-        // to get multiple images from gallery
+        // to get images from gallery
         ActivityResultLauncher<String> getContent = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(),
                 new ActivityResultCallback<List<Uri>>() {
                     @Override
@@ -128,13 +147,77 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         binding.addCameraImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ConvertToPdfActivity.this, ImageCaptureActivity.class);
-                startActivity(intent);
+                // requesting for external storage permission
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // requesting for camera permission
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(ConvertToPdfActivity.this, new String[]{
+                                Manifest.permission.CAMERA
+                        }, PackageManager.PERMISSION_GRANTED);
+                    }
+                    else{
+                        dispatchTakePictureIntent();
+                    }
+                }
+                else{
+                    dispatchTakePictureIntent();
+                }
             }
         });
-
     }
 
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_CANCELED && requestCode == REQUEST_IMAGE_CAPTURE) {
+                Toast.makeText(this, "ok", Toast.LENGTH_SHORT).show();
+                File photoFile = new File(currentPhotoPath);
+                Uri imageUri = Uri.fromFile(photoFile);
+                selectedImageList.add(imageUri);
+                imageAdapter.notifyDataSetChanged();
+        }
+    }
+
+    // method to show all the selected images from the gallery
     private void setUpRecyclerView() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(ConvertToPdfActivity.this, 3);
         imageAdapter = new ImageAdapter(selectedImageList, ConvertToPdfActivity.this, this);
@@ -154,14 +237,13 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(binding.selectedImagesRV);
     }
 
-    // a method that converts image into pdf format and saves it into external storage
+    // a method that converts image into pdf format and to save it into external storage
     public void convertImageToPdf(ArrayList<Uri> uriList) {
 
         PdfDocument pdfDocument = new PdfDocument();
@@ -187,9 +269,9 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             pdfDocument.finishPage(page);
         }
 
-        // for storing image in external storage in android q and above and else part for less than android q
+        // for storing image in external storage
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-
+            // storing image in android q and above
             ContentResolver contentResolver = getContentResolver();
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
@@ -204,6 +286,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
                 e.printStackTrace();
             }
         } else {
+            // storing image in android version less than android q
             File file = new File(Environment.DIRECTORY_DOCUMENTS + File.separator + "ScanX" + File.separator + "Pdf Documents");
             if (!file.mkdirs()) {
                 file.mkdirs();
@@ -250,6 +333,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         imageAdapter.updateData(selectedImageList, position);
     }
 
+    // method to show bigger image
     @Override
     public void onImageClicked(int position) {
         // showing dialog box with image that clicked
@@ -260,7 +344,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
 
         AlertDialog dialog = new AlertDialog.Builder(ConvertToPdfActivity.this)
                 .setView(view)
-                .setCancelable(false)
+                .setCancelable(true)
                 .create();
         dialog.show();
 

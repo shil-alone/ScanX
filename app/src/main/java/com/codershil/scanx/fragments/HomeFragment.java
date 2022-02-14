@@ -15,8 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.codershil.scanx.ConvertToPdfActivity;
-import com.codershil.scanx.ImageCaptureActivity;
+import com.codershil.scanx.activities.ConvertToPdfActivity;
 import com.codershil.scanx.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
@@ -57,8 +56,6 @@ public class HomeFragment extends Fragment {
                         imageUriList.clear();
                     }
                 });
-
-        // handling onclick
         binding.selectGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,12 +63,15 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+        // clicking image from camera
         binding.cameraCaputure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), ImageCaptureActivity.class));
+                startActivity(new Intent(getActivity(), ConvertToPdfActivity.class));
             }
         });
+
         return binding.getRoot();
     }
 

@@ -1,4 +1,4 @@
-package com.codershil.scanx;
+package com.codershil.scanx.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.codershil.scanx.R;
 import com.codershil.scanx.databinding.ActivityMainBinding;
 import com.codershil.scanx.fragments.HomeFragment;
 import com.codershil.scanx.fragments.ImageToolsFragment;
@@ -69,12 +70,19 @@ public class MainActivity extends AppCompatActivity {
                 }, PackageManager.PERMISSION_GRANTED);
             }
 
+            // requesting for camera permission
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA
+                }, PackageManager.PERMISSION_GRANTED);
+            }
         }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
