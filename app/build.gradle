@@ -45,7 +45,11 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.7.0'
     // dependency for pdf viewer
     implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
-    // cameraKit dependency for image capture
-    implementation 'com.wonderkiln:camerakit:0.13.1'
+
+    // dependencies for camera uses
+    implementation 'com.camerakit:camerakit:1.0.0-beta3.11'
+    implementation 'com.camerakit:jpegkit:0.1.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.0'
 
 }

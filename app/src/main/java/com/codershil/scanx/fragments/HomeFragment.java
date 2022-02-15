@@ -42,27 +42,13 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
-        // to get multiple images from gallery
-        ActivityResultLauncher<String> getContent = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(),
-                new ActivityResultCallback<List<Uri>>() {
-                    @Override
-                    public void onActivityResult(List<Uri> result) {
-                        ArrayList<Uri> imageList = new ArrayList<>(result);
-                        imageUriList = imageList;
-                        //passing arraylist to ConvertToPdfActivity via intent
-                        Intent intent = new Intent(getActivity(), ConvertToPdfActivity.class);
-                        intent.putExtra("imageUriData", imageUriList);
-                        startActivity(intent);
-                        imageUriList.clear();
-                    }
-                });
         binding.selectGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getContent.launch("image/*");
+                Intent intent = new Intent(getActivity(), ConvertToPdfActivity.class);
+                startActivity(intent);
             }
         });
-
 
         // clicking image from camera
         binding.cameraCaputure.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +60,5 @@ public class HomeFragment extends Fragment {
 
         return binding.getRoot();
     }
-
 
 }

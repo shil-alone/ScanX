@@ -69,13 +69,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         setContentView(binding.getRoot());
         binding.progressBar.setVisibility(View.GONE);
 
-//         getting data image capture activity
-        Bundle bundle = getIntent().getExtras();
-        if(bundle != null){
-            ArrayList<Uri> newList = (ArrayList<Uri>) bundle.get("imageUriData");
-            selectedImageList.addAll(newList);
-        }
-
         setUpRecyclerView();
 
         // handling onclick events and building dialog box
@@ -144,26 +137,35 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             }
         });
 
+//        binding.addCameraImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // requesting for external storage permission
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    // requesting for camera permission
+//                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                        ActivityCompat.requestPermissions(ConvertToPdfActivity.this, new String[]{
+//                                Manifest.permission.CAMERA
+//                        }, PackageManager.PERMISSION_GRANTED);
+//                    }
+//                    else{
+//                        dispatchTakePictureIntent();
+//                    }
+//                }
+//                else{
+//                    dispatchTakePictureIntent();
+//                }
+//            }
+//        });
+
         binding.addCameraImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // requesting for external storage permission
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // requesting for camera permission
-                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(ConvertToPdfActivity.this, new String[]{
-                                Manifest.permission.CAMERA
-                        }, PackageManager.PERMISSION_GRANTED);
-                    }
-                    else{
-                        dispatchTakePictureIntent();
-                    }
-                }
-                else{
-                    dispatchTakePictureIntent();
-                }
+                startActivity(new Intent(ConvertToPdfActivity.this,ImageCaptureActivity.class));
             }
         });
+
+
     }
 
     private void dispatchTakePictureIntent() {
@@ -209,7 +211,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_CANCELED && requestCode == REQUEST_IMAGE_CAPTURE) {
-                Toast.makeText(this, "ok", Toast.LENGTH_SHORT).show();
                 File photoFile = new File(currentPhotoPath);
                 Uri imageUri = Uri.fromFile(photoFile);
                 selectedImageList.add(imageUri);
@@ -245,7 +246,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
 
     // a method that converts image into pdf format and to save it into external storage
     public void convertImageToPdf(ArrayList<Uri> uriList) {
-
         PdfDocument pdfDocument = new PdfDocument();
         OutputStream outputStream;
 
