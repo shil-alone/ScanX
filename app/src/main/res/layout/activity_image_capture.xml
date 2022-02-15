@@ -7,39 +7,24 @@
     tools:context=".activities.ImageCaptureActivity">
 
 
-    <com.camerakit.CameraKitView
+    <com.wonderkiln.camerakit.CameraView
         android:id="@+id/camera"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:adjustViewBounds="true"
-        android:keepScreenOn="true"
-        app:camera_facing="back"
-        app:camera_flash="auto"
-        app:camera_focus="continuous"
-        app:camera_permissions="camera"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    </com.camerakit.CameraKitView>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="160dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" >
-
-    </androidx.recyclerview.widget.RecyclerView>
+    </com.wonderkiln.camerakit.CameraView>
 
     <ImageView
         android:id="@+id/btnCaptureImage"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginBottom="8dp"
+        android:tint="@color/emerald"
         app:layout_constraintBottom_toBottomOf="@+id/camera"
         app:layout_constraintEnd_toEndOf="@+id/camera"
         app:layout_constraintStart_toStartOf="@+id/camera"
@@ -50,9 +35,34 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
+        android:tint="@color/emerald"
         app:layout_constraintBottom_toBottomOf="@+id/btnCaptureImage"
         app:layout_constraintStart_toStartOf="@+id/camera"
         app:layout_constraintTop_toTopOf="@+id/btnCaptureImage"
         app:srcCompat="@drawable/ic_flash_on" />
+
+    <ImageView
+        android:id="@+id/btnConvert"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:tint="@color/emerald"
+        app:layout_constraintBottom_toBottomOf="@+id/btnCaptureImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnCaptureImage"
+        app:srcCompat="@drawable/ic_convert" />
+
+    <TextView
+        android:id="@+id/txtImageCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="0"
+        android:textColor="@color/emerald"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnConvert"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

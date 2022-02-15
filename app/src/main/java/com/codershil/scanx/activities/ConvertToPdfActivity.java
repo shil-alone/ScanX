@@ -55,12 +55,14 @@ import java.util.List;
 public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdapter.OnDeleteListener {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    public ArrayList<Uri> selectedImageList = new ArrayList<>();
+    static final int REQUEST_IMAGE_EDIT = 2;
+    public static ArrayList<Uri> selectedImageList = new ArrayList<>();
     public ActivityConvertToPdfBinding binding;
     public ImageAdapter imageAdapter;
     Uri pdfUri;
     String fileName;
     String currentPhotoPath;
+    int position = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,75 +139,21 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             }
         });
 
-//        binding.addCameraImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // requesting for external storage permission
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    // requesting for camera permission
-//                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//                        ActivityCompat.requestPermissions(ConvertToPdfActivity.this, new String[]{
-//                                Manifest.permission.CAMERA
-//                        }, PackageManager.PERMISSION_GRANTED);
-//                    }
-//                    else{
-//                        dispatchTakePictureIntent();
-//                    }
-//                }
-//                else{
-//                    dispatchTakePictureIntent();
-//                }
-//            }
-//        });
-
         binding.addCameraImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ConvertToPdfActivity.this,ImageCaptureActivity.class));
+                startActivity(new Intent(ConvertToPdfActivity.this, ImageCaptureActivity.class));
             }
         });
-
-
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
     }
 
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        imageAdapter.notifyDataSetChanged();
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -215,6 +163,16 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
                 Uri imageUri = Uri.fromFile(photoFile);
                 selectedImageList.add(imageUri);
                 imageAdapter.notifyDataSetChanged();
+        }
+        if(resultCode == -1 && requestCode == REQUEST_IMAGE_EDIT){
+            String result = data.getStringExtra("RESULT");
+            Uri resultUri = null;
+            if(result !=null){
+                resultUri = Uri.parse(result);
+                selectedImageList.set(position,resultUri);
+            }
+
+            imageAdapter.notifyItemInserted(position);
         }
     }
 
@@ -336,25 +294,10 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
     // method to show bigger image
     @Override
     public void onImageClicked(int position) {
-        // showing dialog box with image that clicked
-        View view = LayoutInflater.from(ConvertToPdfActivity.this).inflate(R.layout.image_dialog, null);
-        ImageView btnCancel = view.findViewById(R.id.btnCancel);
-        ImageView imageToShow = view.findViewById(R.id.imageToShow);
-        imageToShow.setImageURI(selectedImageList.get(position));
-
-        AlertDialog dialog = new AlertDialog.Builder(ConvertToPdfActivity.this)
-                .setView(view)
-                .setCancelable(true)
-                .create();
-        dialog.show();
-
-        // setting up listeners on dialog box
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        Intent intent = new Intent(ConvertToPdfActivity.this, CropperActivity.class);
+        intent.putExtra("DATA",selectedImageList.get(position).toString());
+        this.position = position;
+        startActivityForResult(intent,REQUEST_IMAGE_EDIT);
     }
 
 

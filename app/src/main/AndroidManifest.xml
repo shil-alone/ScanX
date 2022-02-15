@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScanX">
         <activity
+            android:name=".activities.CropperActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ImageCaptureActivity"
             android:exported="false" />
 
@@ -46,6 +49,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <meta-data
             android:name="preloaded_fonts"
