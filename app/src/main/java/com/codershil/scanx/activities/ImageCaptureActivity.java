@@ -1,9 +1,7 @@
 package com.codershil.scanx.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,31 +10,29 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.camerakit.CameraKit;
-import com.camerakit.CameraKitView;
 import com.codershil.scanx.R;
 import com.codershil.scanx.adapters.ImageAdapter;
 import com.codershil.scanx.imageTools.ImageTools;
+import com.wonderkiln.camerakit.CameraKit;
+import com.wonderkiln.camerakit.CameraView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class ImageCaptureActivity extends AppCompatActivity implements ImageAdapter.OnDeleteListener {
 
-    private CameraKitView cameraKitView;
     private ImageView btnCaptureImage, btnFlash;
     private RecyclerView recyclerView;
     private ArrayList<Uri> selectedImageList = new ArrayList<>();
     private ImageAdapter imageAdapter;
-
+    private CameraView cameraView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_capture);
-        cameraKitView = findViewById(R.id.camera);
+        cameraView = findViewById(R.id.camera);
         btnCaptureImage = findViewById(R.id.btnCaptureImage);
         btnFlash = findViewById(R.id.btnFlash);
         recyclerView = findViewById(R.id.recyclerView);
