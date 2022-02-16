@@ -252,7 +252,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         for (int i = 0; i < uriList.size(); i++) {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
-
                 // compressing image
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, imageQuality/2, stream);
@@ -274,9 +273,9 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
             pdfDocument.finishPage(page);
         }
 
-        // for storing image in external storage
+        // for storing pdf in external storage
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // storing image in android q and above
+            // storing pdf in android q and above
             ContentResolver contentResolver = getContentResolver();
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
@@ -291,7 +290,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
                 e.printStackTrace();
             }
         } else {
-            // storing image in android version less than android q
+            // storing pdf in android version less than android q
             File file = new File(Environment.DIRECTORY_DOCUMENTS + File.separator + "ScanX" + File.separator + "Pdf Documents");
             if (!file.mkdirs()) {
                 file.mkdirs();
