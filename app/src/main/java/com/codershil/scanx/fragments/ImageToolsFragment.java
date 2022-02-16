@@ -22,12 +22,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codershil.scanx.R;
 import com.codershil.scanx.activities.ConvertToPdfActivity;
 import com.codershil.scanx.activities.CropperActivity;
 import com.codershil.scanx.imageTools.ImageTools;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class ImageToolsFragment extends Fragment {
     private Button btnSaveImage;
     Uri selectedImageUri;
     String fileName;
+    int imageSize = 0;
 
 
     public ImageToolsFragment() {
@@ -82,6 +85,10 @@ public class ImageToolsFragment extends Fragment {
         imgEditImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(selectedImageUri == null){
+                    Toast.makeText(getContext(), "please select image first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(getActivity(), CropperActivity.class);
                 intent.putExtra("DATA", selectedImageUri.toString());
                 startActivityForResult(intent, REQUEST_IMAGE_EDIT);
@@ -92,6 +99,11 @@ public class ImageToolsFragment extends Fragment {
         btnSaveImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(selectedImageUri == null){
+                    Toast.makeText(getContext(), "please select image first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 // building dialog box to show rename option
                 View view = LayoutInflater.from(getContext()).inflate(R.layout.rename_image_dialog, null);
                 Button btnAutoRename = view.findViewById(R.id.btnAutoRename);
@@ -124,6 +136,14 @@ public class ImageToolsFragment extends Fragment {
                     }
                 });
 
+                imgCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+
             }
         });
 
@@ -132,6 +152,15 @@ public class ImageToolsFragment extends Fragment {
 
     public void saveFileToExternalStorage(Dialog dialog) {
         Bitmap bitmap = ImageTools.UriToBitmap(selectedImageUri, getContext());
+        int sizeInKB = 0;
+        if(!edtSizeInKB.getText().toString().isEmpty()){
+            sizeInKB = Integer.parseInt(edtSizeInKB.getText().toString());
+
+        }
+        if(sizeInKB > 0) {
+            int maxSize = bitmap.getHeight() * bitmap.getWidth();
+            bitmap = ImageTools.reduceBitmapSize(bitmap,maxSize);
+        }
         try {
             ImageTools.saveImage(bitmap, fileName, getContext());
         } catch (IOException e) {

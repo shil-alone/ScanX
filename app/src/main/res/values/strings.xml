@@ -21,7 +21,7 @@
     <string name="image_reducer">Crop, Reduce, Edit Image</string>
     <string name="image_hint">Enter Size in KB</string>
     <string name="image_size">Reduce to KB</string>
-    <string name="image_resolution">Resolution</string>\
+    <string name="image_resolution">Resolution</string>
     <string name="width">Width</string>
     <string name="height">Height</string>
     <string name="crop">Crop</string>

@@ -47,41 +47,7 @@ public class ImageTools {
         return Uri.parse(path);
     }
 
-    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float) width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-
-
-    //For Image Size 640*480, use MAX_SIZE =  307200 as 640*480 307200
-    //private static long MAX_SIZE = 360000;
-    //private static long THUMB_SIZE = 6553;
-
-    public static Bitmap reduceBitmapSize(Bitmap bitmap, int MAX_SIZE) {
-        double ratioSquare;
-        int bitmapHeight, bitmapWidth;
-        bitmapHeight = bitmap.getHeight();
-        bitmapWidth = bitmap.getWidth();
-        ratioSquare = (bitmapHeight * bitmapWidth) / MAX_SIZE;
-        if (ratioSquare <= 1)
-            return bitmap;
-        double ratio = Math.sqrt(ratioSquare);
-        Log.d("mylog", "Ratio: " + ratio);
-        int requiredHeight = (int) Math.round(bitmapHeight / ratio);
-        int requiredWidth = (int) Math.round(bitmapWidth / ratio);
-        return Bitmap.createScaledBitmap(bitmap, requiredWidth, requiredHeight, true);
-    }
-
+    // method to generate thumbnail image
     public static Bitmap generateThumb(Bitmap bitmap, int THUMB_SIZE) {
         double ratioSquare;
         int bitmapHeight, bitmapWidth;
@@ -98,20 +64,21 @@ public class ImageTools {
     }
 
 
-    public static Bitmap compressImageToSpecificSize(Bitmap bitmap, int size) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        int currSize;
-        int currQuality = 100;
-
-        do {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, currQuality, stream);
-            currSize = stream.toByteArray().length;
-            // limit quality by 5 percent every time
-            currQuality -= 5;
-
-        } while (currSize >= size);
-        return bitmap;
+    public static Bitmap reduceBitmapSize(Bitmap bitmap,int MAX_SIZE) {
+        double ratioSquare;
+        int bitmapHeight, bitmapWidth;
+        bitmapHeight = bitmap.getHeight();
+        bitmapWidth = bitmap.getWidth();
+        ratioSquare = (bitmapHeight * bitmapWidth) / MAX_SIZE;
+        if (ratioSquare <= 1)
+            return bitmap;
+        double ratio = Math.sqrt(ratioSquare);
+        Log.d("mylog", "Ratio: " + ratio);
+        int requiredHeight = (int) Math.round(bitmapHeight / ratio);
+        int requiredWidth = (int) Math.round(bitmapWidth / ratio);
+        return Bitmap.createScaledBitmap(bitmap, requiredWidth, requiredHeight, true);
     }
+
 
     public static void saveImage(Bitmap bitmap, @NonNull String name, Context context) throws IOException {
         OutputStream fos;
@@ -132,5 +99,14 @@ public class ImageTools {
         Objects.requireNonNull(fos).close();
         Toast.makeText(context, "saved image to Pictures /ScanX /Images", Toast.LENGTH_SHORT).show();
     }
+
+
+
+
+
+
+
+
+
 
 }
