@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.pdf.PdfDocument;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +36,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codershil.scanx.R;
@@ -42,6 +46,7 @@ import com.codershil.scanx.adapters.ImageAdapter;
 import com.codershil.scanx.databinding.ActivityConvertToPdfBinding;
 import com.codershil.scanx.imageTools.ImageTools;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,10 +64,11 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
     public static ArrayList<Uri> selectedImageList = new ArrayList<>();
     public ActivityConvertToPdfBinding binding;
     public ImageAdapter imageAdapter;
+    int imageQuality = 40;
     Uri pdfUri;
     String fileName;
     String currentPhotoPath;
-    int position = -1;
+    int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,7 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         setContentView(binding.getRoot());
         binding.progressBar.setVisibility(View.GONE);
 
+        selectedImageList.clear();
         setUpRecyclerView();
 
         // handling onclick events and building dialog box
@@ -84,12 +91,35 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
                 Button btnRename = view.findViewById(R.id.btnRename);
                 ImageView imgCancel = view.findViewById(R.id.imgCancel);
                 EditText edtFileName = view.findViewById(R.id.edtFileName);
+                SeekBar qualityBar = view.findViewById(R.id.qualityBar);
+                TextView txtQuality = view.findViewById(R.id.txtQuality);
+                txtQuality.setText(String.valueOf(imageQuality));
+                qualityBar.setMax(100);
+                qualityBar.setProgress(imageQuality);
                 AlertDialog dialog = new AlertDialog.Builder(ConvertToPdfActivity.this)
                         .setView(view)
                         .setCancelable(false)
                         .create();
                 dialog.show();
 
+                // changing image quality on seekbar change
+                qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        imageQuality = progress;
+                        txtQuality.setText(String.valueOf(progress));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
                 // setting up listeners on dialog box
                 imgCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -147,29 +177,27 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         });
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         imageAdapter.notifyDataSetChanged();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_CANCELED && requestCode == REQUEST_IMAGE_CAPTURE) {
-                File photoFile = new File(currentPhotoPath);
-                Uri imageUri = Uri.fromFile(photoFile);
-                selectedImageList.add(imageUri);
-                imageAdapter.notifyDataSetChanged();
+            File photoFile = new File(currentPhotoPath);
+            Uri imageUri = Uri.fromFile(photoFile);
+            selectedImageList.add(imageUri);
+            imageAdapter.notifyDataSetChanged();
         }
-        if(resultCode == -1 && requestCode == REQUEST_IMAGE_EDIT){
+        if (resultCode == -1 && requestCode == REQUEST_IMAGE_EDIT) {
             String result = data.getStringExtra("RESULT");
             Uri resultUri = null;
-            if(result !=null){
+            if (result != null) {
                 resultUri = Uri.parse(result);
-                selectedImageList.set(position,resultUri);
+                selectedImageList.set(position, resultUri);
             }
 
             imageAdapter.notifyItemInserted(position);
@@ -202,6 +230,18 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         itemTouchHelper.attachToRecyclerView(binding.selectedImagesRV);
     }
 
+    public void startPdfConversion(Dialog dialog) {
+        dialog.dismiss();
+        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.btnConvertToPdf.setEnabled(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                convertImageToPdf(selectedImageList);
+            }
+        }).start();
+    }
+
     // a method that converts image into pdf format and to save it into external storage
     public void convertImageToPdf(ArrayList<Uri> uriList) {
         PdfDocument pdfDocument = new PdfDocument();
@@ -212,7 +252,14 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
         for (int i = 0; i < uriList.size(); i++) {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriList.get(i));
-                imageBitmapList.add(bitmap);
+
+                // compressing image
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, imageQuality/2, stream);
+                byte[] byteArray = stream.toByteArray();
+                Bitmap imageBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+                imageBitmapList.add(imageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -272,18 +319,6 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
 
     }
 
-    public void startPdfConversion(Dialog dialog) {
-        dialog.dismiss();
-        binding.progressBar.setVisibility(View.VISIBLE);
-        binding.btnConvertToPdf.setEnabled(false);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                convertImageToPdf(selectedImageList);
-            }
-        }).start();
-    }
-
     // method to delete an item from selected image list and update recycler view
     @Override
     public void onDeleteClicked(int position) {
@@ -295,9 +330,9 @@ public class ConvertToPdfActivity extends AppCompatActivity implements ImageAdap
     @Override
     public void onImageClicked(int position) {
         Intent intent = new Intent(ConvertToPdfActivity.this, CropperActivity.class);
-        intent.putExtra("DATA",selectedImageList.get(position).toString());
+        intent.putExtra("DATA", selectedImageList.get(position).toString());
         this.position = position;
-        startActivityForResult(intent,REQUEST_IMAGE_EDIT);
+        startActivityForResult(intent, REQUEST_IMAGE_EDIT);
     }
 
 

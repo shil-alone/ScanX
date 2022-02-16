@@ -120,6 +120,7 @@ public class ImageCaptureActivity extends AppCompatActivity {
         btnSwitchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // switching camera from front to rear or rear to front
                 if (cameraView != null) {
                     int facing = cameraView.getFacing();
                     cameraView.setFacing(facing == CameraKit.Constants.FACING_FRONT ?
@@ -130,6 +131,7 @@ public class ImageCaptureActivity extends AppCompatActivity {
 
     }
 
+    // method for turning on torch
     private void startTorch(boolean state) {
         try {
             // turning flash on

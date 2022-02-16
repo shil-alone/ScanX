@@ -68,9 +68,42 @@
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="center"
+                    android:text="@string/select_quality"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/txtQuality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="center"
+                    android:text="40"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <SeekBar
+                    android:id="@+id/qualityBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/image_bg" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
                     <Button
