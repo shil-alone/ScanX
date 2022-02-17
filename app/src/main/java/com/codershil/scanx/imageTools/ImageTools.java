@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
@@ -64,23 +65,24 @@ public class ImageTools {
     }
 
 
-    public static Bitmap reduceBitmapSize(Bitmap bitmap,int MAX_SIZE) {
-        double ratioSquare;
-        int bitmapHeight, bitmapWidth;
-        bitmapHeight = bitmap.getHeight();
-        bitmapWidth = bitmap.getWidth();
-        ratioSquare = (bitmapHeight * bitmapWidth) / MAX_SIZE;
-        if (ratioSquare <= 1)
-            return bitmap;
-        double ratio = Math.sqrt(ratioSquare);
-        Log.d("mylog", "Ratio: " + ratio);
-        int requiredHeight = (int) Math.round(bitmapHeight / ratio);
-        int requiredWidth = (int) Math.round(bitmapWidth / ratio);
-        return Bitmap.createScaledBitmap(bitmap, requiredWidth, requiredHeight, true);
+    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        return resizedBitmap;
     }
 
 
-    public static void saveImage(Bitmap bitmap, @NonNull String name, Context context) throws IOException {
+    public static void saveImage(Bitmap bitmap, @NonNull String name, Context context,int imageQuality, int newWidth, int newHeight) throws IOException {
         OutputStream fos;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContentResolver resolver = context.getContentResolver();
@@ -95,7 +97,17 @@ public class ImageTools {
             File image = new File(imagesDir, name + ".jpg");
             fos = new FileOutputStream(image);
         }
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        bitmap = getResizedBitmap(bitmap,newWidth, newHeight);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, imageQuality, fos);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, imageQuality, stream);
+        byte[] imageInByte = stream.toByteArray();
+        long sizeInByte = imageInByte.length;
+
+        long sizeInKB = sizeInByte/1024;
+        Toast.makeText(context, "size of image is : "+sizeInKB +" KB", Toast.LENGTH_LONG).show();
+
         Objects.requireNonNull(fos).close();
         Toast.makeText(context, "saved image to Pictures /ScanX /Images", Toast.LENGTH_SHORT).show();
     }

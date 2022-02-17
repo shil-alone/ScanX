@@ -38,11 +38,13 @@ public class ImageToolsFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_EDIT = 2;
     private ImageView imgSelectedImage, imgEditImage;
-    private EditText edtSizeInKB, edtImageWidth, edtImageHeight;
+    private EditText  edtImageWidth, edtImageHeight;
     private Button btnSaveImage;
     Uri selectedImageUri;
     String fileName;
-    int imageSize = 0;
+    SeekBar qualityBar;
+    TextView txtQuality;
+    int imageQuality = 100;
 
 
     public ImageToolsFragment() {
@@ -61,10 +63,11 @@ public class ImageToolsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_image_tools, container, false);
         imgSelectedImage = view.findViewById(R.id.img_selected_image);
         imgEditImage = view.findViewById(R.id.img_edit_image);
-        edtSizeInKB = view.findViewById(R.id.edtSizeInKB);
         edtImageWidth = view.findViewById(R.id.edtImageWidth);
         edtImageHeight = view.findViewById(R.id.edtImageHeight);
         btnSaveImage = view.findViewById(R.id.btn_save_image);
+        qualityBar = view.findViewById(R.id.qualityBar1);
+        txtQuality = view.findViewById(R.id.txtQuality1);
 
         // to get image from gallery
         ActivityResultLauncher<String> getContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -73,6 +76,11 @@ public class ImageToolsFragment extends Fragment {
                     public void onActivityResult(Uri result) {
                         imgSelectedImage.setImageURI(result);
                         selectedImageUri = result;
+                        if(selectedImageUri != null){
+                            Bitmap bitmap = ImageTools.UriToBitmap(selectedImageUri, getContext());
+                            edtImageWidth.setText(String.valueOf(bitmap.getWidth()));
+                            edtImageHeight.setText(String.valueOf(bitmap.getHeight()));
+                        }
                     }
                 });
         imgSelectedImage.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +103,26 @@ public class ImageToolsFragment extends Fragment {
             }
         });
 
+        qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                imageQuality = progress;
+                txtQuality.setText(String.valueOf(imageQuality));
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        qualityBar.setProgress(100);
+        txtQuality.setText(String.valueOf(imageQuality));
 
         btnSaveImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,17 +180,20 @@ public class ImageToolsFragment extends Fragment {
 
     public void saveFileToExternalStorage(Dialog dialog) {
         Bitmap bitmap = ImageTools.UriToBitmap(selectedImageUri, getContext());
-        int sizeInKB = 0;
-        if(!edtSizeInKB.getText().toString().isEmpty()){
-            sizeInKB = Integer.parseInt(edtSizeInKB.getText().toString());
+        if(edtImageWidth.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "enter width of the image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(edtImageHeight.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "enter height of the image", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        }
-        if(sizeInKB > 0) {
-            int maxSize = bitmap.getHeight() * bitmap.getWidth();
-            bitmap = ImageTools.reduceBitmapSize(bitmap,maxSize);
-        }
+        int imageWidth = Integer.parseInt(edtImageWidth.getText().toString());
+        int imageHeight = Integer.parseInt(edtImageHeight.getText().toString());
+
         try {
-            ImageTools.saveImage(bitmap, fileName, getContext());
+            ImageTools.saveImage(bitmap, fileName, getContext(),imageQuality,imageWidth,imageHeight);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -180,6 +211,9 @@ public class ImageToolsFragment extends Fragment {
                 resultUri = Uri.parse(result);
                 imgSelectedImage.setImageURI(resultUri);
                 selectedImageUri = resultUri;
+                Bitmap bitmap = ImageTools.UriToBitmap(selectedImageUri,getContext());
+                edtImageHeight.setText(String.valueOf(bitmap.getHeight()));
+                edtImageWidth.setText(String.valueOf(bitmap.getWidth()));
             }
         }
     }

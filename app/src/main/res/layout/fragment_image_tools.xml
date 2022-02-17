@@ -6,33 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ImageToolsFragment">
 
-    <EditText
-        android:id="@+id/edtImageWidth"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/image_bg"
-        android:ems="10"
-        android:hint="@string/width"
-        android:inputType="numberDecimal"
-        android:padding="8dp"
-        app:layout_constraintStart_toStartOf="@+id/edtSizeInKB"
-        app:layout_constraintTop_toBottomOf="@+id/edtSizeInKB" />
-
-    <EditText
-        android:id="@+id/edtImageHeight"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/image_bg"
-        android:ems="10"
-        android:hint="@string/height"
-        android:inputType="numberDecimal"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/edtImageWidth"
-        app:layout_constraintStart_toEndOf="@+id/edtImageWidth"
-        app:layout_constraintTop_toTopOf="@+id/edtImageWidth" />
-
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -54,8 +27,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="10dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3">
@@ -77,92 +50,114 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:fontFamily="@font/baloo"
                 android:gravity="center"
                 android:text="@string/select_image_here"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="@string/image_reducer"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btn_save_image"
-        android:layout_width="0dp"
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/emerald"
-        android:padding="12dp"
-        android:text="@string/save_image"
-        android:textColor="@color/black"
-        app:cornerRadius="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_image">
 
-    <EditText
-        android:id="@+id/edtSizeInKB"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/image_bg"
-        android:ems="10"
-        android:hint="@string/image_hint"
-        android:inputType="numberDecimal"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/card_image"
-        app:layout_constraintStart_toEndOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/card_image" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="@string/select_quality"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/brawler"
-        android:text="@string/image_size"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/edtSizeInKB"
-        app:layout_constraintStart_toStartOf="@+id/card_image"
-        app:layout_constraintTop_toTopOf="@+id/edtSizeInKB" />
+        <TextView
+            android:id="@+id/txtQuality1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="100"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <SeekBar
+            android:id="@+id/qualityBar1"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/image_bg" />
+
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
         android:fontFamily="@font/brawler"
         android:text="@string/image_resolution"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/edtSizeInKB" />
+        app:layout_constraintBottom_toBottomOf="@+id/edtImageWidth"
+        app:layout_constraintStart_toEndOf="@+id/edtImageWidth"
+        app:layout_constraintTop_toTopOf="@+id/edtImageWidth" />
+
+    <EditText
+        android:id="@+id/edtImageWidth"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:background="@drawable/image_bg"
+        android:ems="10"
+        android:hint="@string/width"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        app:layout_constraintStart_toEndOf="@+id/edtImageHeight"
+        app:layout_constraintTop_toTopOf="@+id/edtImageHeight" />
+
+    <EditText
+        android:id="@+id/edtImageHeight"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/image_bg"
+        android:ems="10"
+        android:hint="@string/height"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginLeft="32dp"
         android:fontFamily="@font/brawler"
-        android:text="@string/crop"
+        android:text="@string/edit"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/edtImageWidth" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_edit_image"
+        app:layout_constraintStart_toEndOf="@+id/img_edit_image"
+        app:layout_constraintTop_toTopOf="@+id/img_edit_image" />
 
     <ImageView
         android:id="@+id/img_edit_image"
@@ -172,8 +167,24 @@
         android:background="@drawable/image_bg"
         android:padding="5dp"
         android:src="@drawable/image_reduce"
-        app:layout_constraintStart_toStartOf="@+id/edtImageWidth"
-        app:layout_constraintTop_toBottomOf="@+id/edtImageWidth" />
+        app:layout_constraintStart_toStartOf="@+id/edtImageHeight"
+        app:layout_constraintTop_toBottomOf="@+id/edtImageHeight" />
+
+    <Button
+        android:id="@+id/btn_save_image"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/emerald"
+        android:padding="12dp"
+        android:text="@string/save_image"
+        android:textColor="@color/black"
+        app:cornerRadius="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
