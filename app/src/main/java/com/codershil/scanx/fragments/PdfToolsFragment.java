@@ -11,11 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codershil.scanx.R;
+import com.codershil.scanx.activities.OCRActivity;
 import com.codershil.scanx.activities.SpeechToPdfActivity;
 
 public class PdfToolsFragment extends Fragment {
 
-    private CardView cardSpeechToPdf;
+    private CardView cardSpeechToPdf, cardOcrScan;
 
     public PdfToolsFragment() {
         // Required empty public constructor
@@ -32,11 +33,19 @@ public class PdfToolsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pdf_tools, container, false);
 
         cardSpeechToPdf = view.findViewById(R.id.card_speech_to_pdf);
+        cardOcrScan = view.findViewById(R.id.cardOcrScan);
 
         cardSpeechToPdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), SpeechToPdfActivity.class));
+            }
+        });
+
+        cardOcrScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), OCRActivity.class));
             }
         });
 

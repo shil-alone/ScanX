@@ -42,9 +42,9 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/emerald"
         android:padding="16dp"
-        android:text="@string/convert_to_pdf"
         android:textColor="@color/black"
         app:cornerRadius="16dp"
+        android:text="@string/convert_to_pdf"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

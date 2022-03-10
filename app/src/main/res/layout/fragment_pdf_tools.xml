@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/brawler"
-        android:text="@string/speech_to_pdf"
+        android:text="@string/pdf_tools"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -54,7 +54,46 @@
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/baloo"
                 android:gravity="center"
-                android:text="@string/click_to_create"
+                android:text="@string/click_to_speak"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardOcrScan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_speech_to_pdf">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ocr" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="center"
+                android:text="@string/click_to_scan"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
         </LinearLayout>

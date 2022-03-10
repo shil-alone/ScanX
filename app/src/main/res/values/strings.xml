@@ -18,6 +18,7 @@
     <string name="rename">Rename</string>
     <string name="about_us">About Us</string>
     <string name="capture">Capture</string>
+    <string name="copy_text">Copy Text</string>
     <string name="image_reducer">Crop, Reduce, Edit Image</string>
     <string name="image_hint">Enter Size in KB</string>
     <string name="image_size">Reduce to KB</string>
@@ -27,9 +28,10 @@
     <string name="edit">Edit</string>
     <string name="save_image">Save Image</string>
 
-    <string name="speech_to_pdf">Speech To PDF</string>
-    <string name="click_to_create">Click To Create PDF</string>
+    <string name="click_to_speak">Click Speak</string>
+    <string name="click_to_scan">Click To Scan Image</string>
     <string name="enter_text_here">Text Will Be Shown Here</string>
+    <string name="scan_image">Scan the image or click photo to show text here</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
