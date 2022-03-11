@@ -3,6 +3,7 @@ package com.codershil.scanx.activities;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -14,11 +15,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +33,14 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import com.wonderkiln.camerakit.CameraKitError;
+import com.wonderkiln.camerakit.CameraKitEvent;
+import com.wonderkiln.camerakit.CameraKitEventListener;
+import com.wonderkiln.camerakit.CameraKitImage;
+import com.wonderkiln.camerakit.CameraKitVideo;
+import com.wonderkiln.camerakit.CameraView;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
@@ -39,6 +49,8 @@ public class OCRActivity extends AppCompatActivity {
     private TextView txtOcrText;
     private Button btnCaptureOcr, btnCopyText;
     Bitmap bitmap;
+    public CameraView cameraView;
+    private ImageView btnCaptureImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +59,48 @@ public class OCRActivity extends AppCompatActivity {
         txtOcrText = findViewById(R.id.txtOcrText);
         btnCaptureOcr = findViewById(R.id.btnCaptureOcr);
         btnCopyText = findViewById(R.id.btnCopyText);
+        cameraView = findViewById(R.id.camera);
+        btnCaptureImage = findViewById(R.id.btnCaptureImage);
         requestPermissions();
+        cameraView.setVisibility(View.GONE);
+        btnCaptureImage.setVisibility(View.GONE);
+
+        cameraView.addCameraKitListener(new CameraKitEventListener() {
+            @Override
+            public void onEvent(CameraKitEvent cameraKitEvent) {
+            }
+
+            @Override
+            public void onError(CameraKitError cameraKitError) {
+            }
+
+            @Override
+            public void onImage(CameraKitImage cameraKitImage) {
+                bitmap = cameraKitImage.getBitmap();
+                cameraView.setVisibility(View.GONE);
+                btnCaptureImage.setVisibility(View.GONE);
+                getTextFromImage(bitmap);
+            }
+
+            @Override
+            public void onVideo(CameraKitVideo cameraKitVideo) {
+            }
+        });
+        cameraView.start();
+
+
+        btnCaptureImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraView.captureImage();
+            }
+        });
 
         btnCaptureOcr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCamera();
+                cameraView.setVisibility(View.VISIBLE);
+                btnCaptureImage.setVisibility(View.VISIBLE);
             }
         });
 
@@ -62,6 +110,7 @@ public class OCRActivity extends AppCompatActivity {
                 copyToClipBoard(txtOcrText.getText().toString());
             }
         });
+
     }
 
     @Override
@@ -74,11 +123,6 @@ public class OCRActivity extends AppCompatActivity {
                 getTextFromImage(bitmap);
             }
         }
-    }
-
-    private void openCamera() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
     }
 
     private void getTextFromImage(Bitmap bitmap) {
