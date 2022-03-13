@@ -7,11 +7,11 @@
     tools:context=".activities.OCRActivity">
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnCaptureOcr"
+        app:layout_constraintBottom_toBottomOf="@+id/btnCaptureImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -35,6 +35,7 @@
                 android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
+
 
     <Button
         android:id="@+id/btnCaptureOcr"
@@ -69,5 +70,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btnCaptureOcr" />
+
+    <com.wonderkiln.camerakit.CameraView
+        android:id="@+id/camera"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
+        app:layout_constraintEnd_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toStartOf="@+id/scrollView2"
+        app:layout_constraintTop_toTopOf="@+id/scrollView2">
+
+    </com.wonderkiln.camerakit.CameraView>
+
+    <ImageView
+        android:id="@+id/btnCaptureImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:tint="@color/emerald"
+        app:layout_constraintBottom_toTopOf="@+id/btnCaptureOcr"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_camera" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
